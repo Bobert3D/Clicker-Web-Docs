@@ -8,32 +8,26 @@
     * { box-sizing: border-box; font-family: Roboto, Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: #f9fbfd; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
     
-    /* Top Google Style Toolbar Layout */
     .top-bar { background-color: #fff; border-bottom: 1px solid #e0e0e0; padding: 8px 16px; }
     .sheet-title { display: flex; align-items: center; font-size: 18px; color: #1f1f1f; margin-bottom: 4px; font-weight: 400; }
     .sheet-title img { width: 24px; margin-right: 8px; }
     .menu-items { display: flex; gap: 14px; font-size: 14px; color: #444746; margin-left: 32px; }
     
-    /* Formula Bar Layout */
     .formula-bar { display: flex; background: #fff; border-bottom: 1px solid #e0e0e0; align-items: center; font-size: 13px; padding: 4px 16px; color: #444746; }
-    .fx-icon { font-weight: bold; color: #777; italic; font-family: serif; margin-right: 12px; font-size: 16px; }
+    .fx-icon { font-weight: bold; color: #777; font-style: italic; font-family: serif; margin-right: 12px; font-size: 16px; }
     .formula-input { border: 1px solid #e0e0e0; flex-grow: 1; padding: 2px 8px; background: #f8fafc; font-family: monospace; }
 
-    /* The Main Game Split Layout */
     .app-container { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
     
-    /* LEFT SIDE: Fake Spreadsheet Grid Grid Layout */
-    .spreadsheet-canvas { flex-grow: 1; overflow: auto; background-color: #fff; display: grid; grid-template-columns: 40px repeat(10, 120px); grid-auto-rows: 24px; position: relative; }
+    .spreadsheet-canvas { flex-grow: 1; overflow: auto; background-color: #fff; display: grid; grid-template-columns: 40px repeat(11, 120px); grid-auto-rows: 24px; position: relative; }
     .cell { border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; font-size: 13px; display: flex; align-items: center; padding: 0 6px; color: #333; background: #fff; }
     .header-cell { background-color: #f8f9fa; color: #5f6368; font-weight: bold; justify-content: center; font-size: 12px; user-select: none; position: sticky; top: 0; z-index: 2; }
     .row-num-cell { background-color: #f8f9fa; color: #5f6368; justify-content: center; font-size: 11px; user-select: none; position: sticky; left: 0; z-index: 1; }
     .corner-cell { position: sticky; top: 0; left: 0; z-index: 3; background: #f8f9fa; border-right: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; }
     
-    /* Highlighted Stat Target Cells */
     .stat-cell { background: #e8f0fe !important; font-weight: bold; color: #1a73e8; justify-content: right; }
     .selected-ring { border: 2px solid #1a73e8 !important; z-index: 5; }
 
-    /* RIGHT SIDE: Dedicated Clicker Action Interface Panel */
     .game-sidebar { width: 320px; background-color: #ffffff; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; padding: 20px; box-shadow: -2px 0 8px rgba(0,0,0,0.03); }
     .panel-header { font-size: 18px; font-weight: bold; color: #202124; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #34a853; padding-bottom: 8px; }
     
@@ -46,7 +40,6 @@
     
     .status-alert { font-size: 11px; color: #70757a; font-style: italic; text-align: center; margin-top: auto; padding-top: 15px; }
 
-    /* Visual Rank Color Schemes */
     .leaderboard-container { margin-top: 25px; background: #f8f9fa; border-radius: 8px; padding: 12px; border: 1px solid #e0e0e0; }
     .leaderboard-title { font-weight: bold; text-align: center; font-size: 14px; margin-bottom: 10px; color: #3c4043; }
     .leaderboard-row { display: flex; justify-content: space-between; padding: 6px 8px; font-size: 13px; border-radius: 4px; margin-bottom: 3px; background: #fff; border: 1px solid #f1f3f4; }
@@ -59,7 +52,6 @@
 </head>
 <body>
 
-  <!-- Top Google Header Frame -->
   <div class="top-bar">
     <div class="sheet-title">
       <img src="https://wikimedia.org" alt="Sheets Logo">
@@ -70,20 +62,16 @@
     </div>
   </div>
 
-  <!-- Formula Display Window -->
   <div class="formula-bar">
     <span class="fx-icon">fx</span>
     <div class="formula-input" id="formulaDisplay">=SUM(CLICKS * MULTIPLIER)</div>
   </div>
 
   <div class="app-container">
-    <!-- LEFT SIDE: Interactive Sheets Grid Canvas -->
     <div class="spreadsheet-canvas" id="gridCanvas">
       <div class="corner-cell"></div>
-      <!-- Alphabet headers are injected automatically via script layer -->
     </div>
 
-    <!-- RIGHT SIDE: Integrated Side Click Panel UI -->
     <div class="game-sidebar">
       <div class="panel-header">🕹️ Clicker Workshop</div>
       
@@ -100,12 +88,16 @@
   </div>
 
   <script>
-    // 1. Establish state hooks or pull matching metrics from local client storage
+    // Configuration details
+    const githubOwner = "Bobert3D";
+    const githubRepo = "Wrong-Clicker-Game-V1";
+    // Change this to your real Vercel URL once deployed, or leave as placeholder to run strictly local!
+    const vercelProxyUrl = "https://vercel.app";
+
     let score = Number(localStorage.getItem('git_score')) || 0;
     let multiplier = Number(localStorage.getItem('git_multiplier')) || 1;
     let upgradeCost = Number(localStorage.getItem('git_upgradeCost')) || 15;
 
-    // Fake high score dataset for immersive spreadsheet immersion
     let localHighScores = [
       { name: "Bobert3D (You)", score: score },
       { name: "ArcadeBot", score: 2500 },
@@ -114,11 +106,10 @@
       { name: "SheetMaster", score: 75 }
     ];
 
-    // 2. Dynamically draw the columns and rows grid framework
     const canvas = document.getElementById('gridCanvas');
     const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
     
-    // Append top header elements
+    // Build Headers
     columns.forEach(col => {
       const cell = document.createElement('div');
       cell.className = 'cell header-cell';
@@ -126,7 +117,7 @@
       canvas.appendChild(cell);
     });
 
-    // Populate the spreadsheet body space down to 25 rows
+    // Generate Rows
     for (let r = 2; r <= 25; r++) {
       const rowNumCell = document.createElement('div');
       rowNumCell.className = 'cell row-num-cell';
@@ -138,7 +129,6 @@
         cell.className = 'cell';
         cell.id = `cell-${col}${r}`;
         
-        // Add text labels to simulate a real layout template
         if (r === 2 && col === 'A') cell.className += ' stat-cell selected-ring';
         if (r === 2 && col === 'B') cell.className += ' stat-cell';
         if (r === 2 && col === 'C') cell.className += ' stat-cell';
@@ -147,19 +137,16 @@
       });
     }
 
-    // 3. Engine Operations & Calculations
     function renderStatsToGrid() {
-      // Print values instantly into the grid positions
-      document.getElementById('cell-A2').innerText = score;
-      document.getElementById('cell-B2').innerText = multiplier;
-      document.getElementById('cell-C2').innerText = upgradeCost;
+      // Safely update DOM text fields
+      if(document.getElementById('cell-A2')) document.getElementById('cell-A2').innerText = score;
+      if(document.getElementById('cell-B2')) document.getElementById('cell-B2').innerText = multiplier;
+      if(document.getElementById('cell-C2')) document.getElementById('cell-C2').innerText = upgradeCost;
       
-      // Update the side control UI strings
       document.getElementById('upgradeBtn').innerText = `Upgrade Multiplier (Cost: ${upgradeCost})`;
       document.getElementById('upgradeBtn').disabled = score < upgradeCost;
       document.getElementById('formulaDisplay').innerText = `=A2 + (${multiplier} * CLICK)`;
 
-      // Save arrays to local browser memory cache loops
       localStorage.setItem('git_score', score);
       localStorage.setItem('git_multiplier', multiplier);
       localStorage.setItem('git_upgradeCost', upgradeCost);
@@ -170,6 +157,7 @@
     function executeClick() {
       score += multiplier;
       renderStatsToGrid();
+      triggerGithubDispatch('click');
     }
 
     function purchaseUpgrade() {
@@ -178,12 +166,13 @@
         multiplier += 1;
         upgradeCost = Math.round(upgradeCost * 1.6);
         renderStatsToGrid();
+        triggerGithubDispatch('upgrade');
       }
     }
 
     function updateLeaderboardView() {
-      localHighScores[0].score = score; // Update your live ranking row
-      // Re-sort array based on numeric strength metrics
+      // FIXED: Safely targeted index 0 of the array instead of trying to map onto the array object itself!
+      localHighScores[0].score = score; 
       localHighScores.sort((a, b) => b.score - a.score);
 
       const listContainer = document.getElementById('leaderboardList');
@@ -195,14 +184,35 @@
 
         listContainer.innerHTML += `
           <div class="leaderboard-row">
-
-          ${rank}
-          ${player.name}
-
-          ${player.score}
-          `;
+            <div>
+              <span class="rank-badge ${badgeClass}">${rank}</span>
+              <span>${player.name}</span>
+            </div>
+            <strong>${player.score}</strong>
+          </div>
+        `;
       });
     }
 
+    function triggerGithubDispatch(actionName) {
+      if (vercelProxyUrl.includes("CHANGE-TO-YOUR-PROJECT")) {
+        return; // Silently skip backend transmission if proxy domain isn't wired up yet
+      }
+      
+document.getElementById('saveTracker').innerText = "Broadcasting dispatch to GitHub Actions...";
+const fullUrl = ${vercelProxyUrl}/dispatch?owner=${githubOwner}&repo=${githubRepo}&action=${actionName};
+fetch(fullUrl)
+.then(res => res.json())
+.then(data => {
+if(data.success) {
+document.getElementById('saveTracker').innerText = "Dispatched successfully! Commit pending... 🚀";
+}
+setTimeout(() => {
+document.getElementById('saveTracker').innerText = "Progress stored instantly in LocalStorage!";
+}, 3000);
+})
+.catch(() => {
+document.getElementById('saveTracker').innerText = "Progress saved locally.";
+});
+}
 renderStatsToGrid();
-
